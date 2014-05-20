@@ -1,0 +1,16 @@
+Requirements Specification
+
+When out of the house i would like to be able to monitor the health of the server in the house, especially during hot days when the loft can get really warm.  The app should enable me access to the server statistics either through a 3g connection, VPN or via the WiFi.  The following statistics are required:
+
+CPU Temperature
+CPU Load
+Fan Speed for 3 different fans
+Hard Drive temperatures
+
+Available Physical Memory
+Available Swap Memory
+Sleep Feature for Server
+WOL Feature
+
+java remote_monitor.Main
+javac remote_monitor/Main.java remote_monitor_util/CpuStats.java
