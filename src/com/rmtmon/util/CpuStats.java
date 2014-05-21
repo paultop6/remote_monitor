@@ -10,31 +10,25 @@ import java.util.Map;
 
 public class CpuStats {
 
-	private int prev_cpu_total;
-	private int prev_total_used;
+	private int prev_used;
+	private int prev_total;
 	float current_used;
 
 	public CpuStats() {
 		System.out.println("cpuStat");
-		prev_cpu_total = 0;
-  		prev_total_used = 0;
-
+  		prev_used = 0;
+  		prev_total = 0;
   		
 	}
 
 	public float get_load() {
 		System.out.println("get_load");
+		float current_usage = 0;
+		int used,total;
 		
 		HashMap<String, ArrayList> cpu_map = new HashMap<String, ArrayList>();
-		//ArrayList<Integer> total_cpu = new ArrayList<Integer>();
 
 		ArrayList<String> cpu_ids = get_cpu_ids();
-
-		System.out.println("Length : " + cpu_ids.size());
-
-		for (int i = 0; i < cpu_ids.size(); i++){
-			System.out.println("Cpu : " + cpu_ids.get(i));
-		}
 
 		ArrayList<String> proc_stat = new ArrayList<String>();
 		try {
@@ -52,26 +46,46 @@ public class CpuStats {
 			for (String cpu_id : cpu_ids) {
 				if (line.startsWith(cpu_id)) {
 					ArrayList<String> cpu_times = new ArrayList<String>(Arrays.asList(line.split(" ")));
-					System.out.println("Cpu_times : " + cpu_times);
 					cpu_map.put(cpu_id, cpu_times);
 					cpu_map.get(cpu_id).remove(cpu_id);
 				}
 			}
 		}
-		System.out.println("cpu_map size : " + cpu_map.size());
-
 		int[] total_cpu = new int[10];
 
 		for (Map.Entry<String, ArrayList> entry : cpu_map.entrySet()) {			
 			for (int i = 0; i < entry.getValue().size(); i++) {
+				//System.out.println("String before : " + entry.getValue().get(i).toString());
 				int cpu_time_value = Integer.parseInt(entry.getValue().get(i).toString());
+				//System.out.println("Float after : " + cpu_time_value);
 				total_cpu[i] = total_cpu[i] + cpu_time_value;
 			}
 			
 		}
-
-        System.out.println(Arrays.toString(total_cpu));
-
+		
+		// total_cpu[0] = cpu
+		// total_cpu[1] = nice
+		// total_cpu[2] = system
+		// total_cpu[3] = idle
+		
+		if (prev_used == 0) {
+			System.out.println("First loop, continue");
+			prev_used = total_cpu[0] + total_cpu[1] + total_cpu[2];
+			prev_total = total_cpu[0] + total_cpu[1] + total_cpu[2] + total_cpu[3];
+			return 0;
+		}
+		
+		used = total_cpu[0] + total_cpu[1] + total_cpu[2];
+		total = total_cpu[0] + total_cpu[1] + total_cpu[2] + total_cpu[3];
+		
+		current_usage = ((float)(used - prev_used) / (float)(total - prev_total));
+		
+		prev_used = used;
+		prev_total = total;  		
+  		
+  		System.out.println("Current Usage : " + current_usage);
+		System.out.println("Current Percentage : " + current_usage * 100);
+		
 		return 0;
 
 	}

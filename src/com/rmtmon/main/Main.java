@@ -7,6 +7,14 @@ public class Main {
 	{
 		System.out.println("stats.");
 		CpuStats cpu_stats = new CpuStats();
-		cpu_stats.get_load();
+		while (true) {
+			cpu_stats.get_load();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		
 	}
 }
